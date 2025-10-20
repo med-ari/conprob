@@ -1,0 +1,1105 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Problemas de Probabilidad y Estadística (Módulo 2 - Clase 16)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          processEscapes: true
+        },
+        svg: {
+          fontCache: 'global'
+        },
+        chtml: {
+          displayAlign: 'left'
+        }
+      };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #4f46e5; --primary-dark: #4338ca; --primary-light: #eef2ff;
+            --secondary-color: #64748b; --success-color: #10b981; --success-light: #ecfdf5;
+            --danger-color: #ef4444; --danger-light: #fef2f2; --warning-color: #f59e0b;
+            --light-bg: #f1f5f9; --border-color: #cbd5e1; --text-color: #1e293b;
+            --white: #ffffff; --progress-color-start: #4f46e5; --progress-color-end: #10b981;
+        }
+        @keyframes moveGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        body {
+            font-family: 'Inter', sans-serif; display: flex; justify-content: center;
+            align-items: flex-start; min-height: 100vh;
+            background: linear-gradient(-45deg, #6d28d9, #4f46e5, #d946ef, #10b981);
+            background-size: 400% 400%; animation: moveGradient 20s ease infinite;
+            margin: 0; padding: 2em 1em;
+        }
+        .main-wrapper { width: 100%; max-width: 900px; position: relative; }
+        .card { background: var(--white); padding: 2.5em; border-radius: 16px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15); animation: fadeIn 0.5s ease-out; }
+        .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDownFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #category-selection-screen h2 { font-size: 2em; color: var(--primary-color); text-align: center; margin-top: 0; margin-bottom: 0.5em; }
+        #category-selection-screen .subtitle { text-align: center; color: var(--secondary-color); margin-bottom: 2em; font-size: 1.1em; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+        #category-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5em; margin-bottom: 2.5em; }
+        .category-item { background-color: var(--white); border: 2px solid var(--border-color); border-radius: 12px; padding: 1.5em; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .category-item:hover:not(.completed) { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(79,70,229,0.1); border-color: var(--primary-color); }
+        .category-item h3 { margin: 0 0 0.5em 0; color: var(--primary-dark); font-size: 1.25em; }
+        .category-item p { margin: 0; color: var(--secondary-color); font-size: 0.95em; line-height: 1.5; }
+        .category-item.completed { border-color: var(--success-color); background-color: var(--success-light); cursor: default; }
+        .category-item.completed:hover { transform: none; box-shadow: none; }
+        .category-item.completed::before { content: '✔'; font-weight: bold; position: absolute; top: 1em; right: 1.2em; color: var(--success-color); font-size: 1.5em; }
+        .category-item .progress-info { margin-top: 1em; font-weight: bold; color: var(--success-color); }
+        #overall-progress-container { margin-top: 2em; text-align: center; border-top: 1px solid var(--border-color); padding-top: 2em;}
+        #overall-progress-container h3 { margin: 0 0 0.5em 0; color: var(--text-color); }
+        #overall-score { font-size: 1.2em; color: var(--secondary-color); }
+        #show-final-results-btn { padding: 12px 30px; font-size: 1em; font-weight: bold; color: var(--white); background-color: var(--success-color); border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin-top: 1em; }
+        #show-final-results-btn:hover { background-color: #059669; }
+
+        /* --- New Summary Card Styles --- */
+        #summary-container h2 { font-size: 1.8em; margin-top: 0; margin-bottom: 0.2em; color: var(--primary-color); }
+        #summary-container .subtitle { color: var(--secondary-color); margin-top: 0; margin-bottom: 2em; }
+        .summary-section { margin-bottom: 2.5em; }
+        .summary-section h3 { font-size: 1.2em; font-weight: 700; color: var(--text-color); margin-bottom: 1em; padding-bottom: 0.5em; border-bottom: 2px solid var(--primary-light); display: flex; align-items: center; gap: 0.75em; }
+        .summary-key-concepts { line-height: 1.7; color: #374151; }
+        .summary-key-concepts p, .summary-key-concepts ul, .summary-key-concepts ol { margin-bottom: 1em; }
+        .summary-key-concepts ul, .summary-key-concepts ol { padding-left: 20px; }
+        .summary-key-concepts strong { color: var(--primary-dark); }
+        .summary-key-concepts mjx-container[display="true"] { background-color: rgba(79, 70, 229, 0.05); padding: 1em; border-radius: 8px; margin: 1em 0; }
+        .summary-tips-list { list-style: none; padding: 0; }
+        .summary-tips-list li { display: flex; align-items: flex-start; gap: 1em; margin-bottom: 1em; background-color: var(--primary-light); padding: 1em; border-radius: 8px; }
+        .summary-tips-list li::before { content: '💡'; font-size: 1.2em; line-height: 1.5; }
+        #summary-continue-btn { padding: 12px 30px; font-size: 1em; font-weight: bold; color: var(--white); background-color: var(--primary-color); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: block; width: 100%; }
+        #summary-continue-btn:hover { background-color: var(--primary-dark); transform: scale(1.02); }
+
+        /* --- Main Quiz & Final Screen Styles --- */
+        #quiz-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5em; }
+        #problem-header { color: var(--text-color); font-weight: 600; font-size: 1.1em; }
+        #score-counter { color: var(--success-color); font-weight: 600; font-size: 1em; background-color: var(--success-light); padding: 5px 10px; border-radius: 8px; }
+        #progress-container { width: 100%; background-color: #e2e8f0; border-radius: 10px; margin-bottom: 1.5em; height: 12px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--progress-color-start), var(--progress-color-end)); border-radius: 10px; transition: width 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); }
+        #question-container { font-size: 1.15em; line-height: 1.7; margin: 1em 0; color: var(--text-color); text-align: justify; }
+        #question-container table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+        #question-container th, #question-container td { border: 1px solid var(--border-color); padding: 12px; text-align: center; }
+        #question-container th { background-color: var(--light-bg); font-weight: 600; }
+        #graph-container, .option-graph-canvas-container { width: 100%; max-width: 450px; margin: 1.5em auto; border-radius: 8px; overflow: hidden; }
+        #graph-container svg, #graph-container img, .option-graph-canvas-container svg, .option-graph-canvas-container img {max-width: 100%; height: auto; display: block; margin: 0 auto; background: white; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);}
+        #options-container { margin-top: 1.5em; display: flex; flex-direction: column; gap: 0.75em; }
+        .option-button { display: flex; align-items: center; gap: 1em; width: 100%; padding: 14px 18px; font-size: 1.05em; text-align: left; background-color: var(--white); border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.2s ease-in-out; }
+        .option-button:hover:not(.disabled) { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .option-button .label { font-weight: bold; color: var(--primary-color); }
+        .option-button .value { flex-grow: 1; }
+        .option-button.correct { border-color: var(--success-color); background-color: var(--success-light); }
+        .option-button.correct .label { color: var(--success-color); }
+        .option-button.incorrect { border-color: var(--danger-color); background-color: var(--danger-light); }
+        .option-button.incorrect .label { color: var(--danger-color); }
+        .option-button.disabled { cursor: not-allowed; }
+        .options-grid-with-graphs { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
+        .option-block-graph { padding: 1em; border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.2s ease-in-out; background-color: var(--white); }
+        .option-block-graph:hover:not(.disabled) { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .option-block-graph.correct { border-color: var(--success-color)!important; background-color: var(--success-light); }
+        .option-block-graph.incorrect { border-color: var(--danger-color)!important; background-color: var(--danger-light); }
+        .option-block-graph .label { font-size: 1.2em; font-weight: bold; margin-bottom: 0.5em; color: var(--primary-color); }
+        
+        #hints-container { margin-top: 1.5em; border-top: 1px dashed var(--border-color); padding-top: 1.5em; display: flex; flex-direction: column; gap: 0.5em; }
+        .hint-button { width: 100%; padding: 10px; background-color: var(--primary-light); border: 1px solid var(--primary-color); color: var(--primary-dark); border-radius: 8px; cursor: pointer; transition: background-color 0.2s; font-weight: 500; }
+        .hint-button:hover { background-color: #dbeafe; }
+        .hint-button:disabled { background-color: #e5e7eb; border-color: var(--border-color); color: var(--secondary-color); cursor: not-allowed; }
+        .hint-content { padding: 12px; background-color: #f3f4f6; border-radius: 8px; font-size: 0.95em; color: var(--text-color); animation: fadeIn 0.3s; }
+
+        #feedback-container { margin-top: 1.5em; padding: 1.2em; border-radius: 12px; display: none; animation: slideDownFade 0.4s ease-out; line-height: 1.7; text-align: justify; }
+        #feedback-container.correct { background-color: var(--success-light); border-left: 5px solid var(--success-color); }
+        #feedback-container.incorrect { background-color: var(--danger-light); border-left: 5px solid var(--danger-color); }
+        #feedback-title { display: flex; align-items: center; font-size: 1.2em; font-weight: 700; margin-bottom: 0.5em; }
+        #feedback-title svg { width: 24px; height: 24px; margin-right: 8px; }
+        #feedback-container.correct #feedback-title { color: var(--success-color); }
+        #feedback-container.incorrect #feedback-title { color: var(--danger-color); }
+        #navigation-container { display: flex; justify-content: flex-end; margin-top: 2em; }
+        #next-button, .nav-btn { padding: 12px 30px; font-size: 1em; font-weight: bold; color: var(--white); background-color: var(--primary-color); border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
+        #next-button { visibility: hidden; opacity: 0; }
+        #next-button.visible { visibility: visible; opacity: 1; }
+        #next-button:hover, .nav-btn:hover { background-color: var(--primary-dark); }
+        #final-screen { text-align: center; animation: fadeIn 0.5s ease-out; }
+        #final-screen h2 { font-size: 2.2em; color: var(--primary-color); font-weight: 700; }
+        #final-screen p { font-size: 1.2em; }
+        .highlight { color: var(--primary-color); font-weight: 700; }
+        @media (max-width: 680px) { .options-grid-with-graphs { grid-template-columns: 1fr; } #category-list { grid-template-columns: 1fr; }}
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div id="category-selection-screen" class="card">
+            <h2>Guía de Problemas de Probabilidad y Estadística (Módulo 2 - Clase 16)</h2>
+            <p class="subtitle">Selecciona un tema para comenzar. Cada sección se enfoca en una habilidad clave. ¡Completa todas las secciones para demostrar tu maestría!</p>
+            <ul id="category-list"></ul>
+            <div id="overall-progress-container" class="hidden">
+                <h3>Progreso General</h3>
+                <p id="overall-score"></p>
+                <button id="show-final-results-btn" class="nav-btn hidden">Ver Resumen Final</button>
+            </div>
+        </div>
+
+        <div id="quiz-wrapper" class="hidden">
+            <div id="summary-container" class="card hidden">
+                <h2 id="summary-title"></h2>
+                <p class="subtitle">Prepárate para la siguiente sección.</p>
+
+                <div class="summary-section">
+                    <h3>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open" style="color: var(--primary-dark);"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                      Conceptos Clave y Fórmulas
+                    </h3>
+                    <div id="summary-key-concepts" class="summary-key-concepts"></div>
+                </div>
+                
+                <div class="summary-section">
+                    <h3>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap" style="color: var(--warning-color);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                      Consejos para esta Sección
+                    </h3>
+                    <ul id="summary-tips-list" class="summary-tips-list"></ul>
+                </div>
+                
+                <button id="summary-continue-btn">Comenzar Problemas</button>
+            </div>
+
+            <div id="quiz-container" class="hidden card">
+                <div id="progress-container"><div id="progress-bar"></div></div>
+                <div id="quiz-header-bar">
+                    <div id="problem-header"></div>
+                    <div id="score-counter"></div>
+                </div>
+                <div id="question-container"></div>
+                <div id="graph-container"></div>
+                <div id="options-container"></div>
+                <div id="hints-container"></div>
+                <div id="feedback-container"></div>
+                <div id="navigation-container"><button id="next-button">Siguiente →</button></div>
+            </div>
+
+            <div id="final-screen" class="hidden card">
+                <h2 id="final-title"></h2>
+                <p id="final-message"></p>
+                <p id="final-score" style="font-size: 2.5em; font-weight: bold; margin: 0.5em 0;"></p>
+                <p id="final-percentage" style="font-size: 1.5em;"></p>
+                <button id="back-to-menu-btn" class="nav-btn">Volver al Menú</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function renderMath() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        setTimeout(() => window.MathJax.typesetPromise(), 0);
+      }
+    }
+
+    function renderDiagram(diagram) {
+        if (!diagram) return '';
+        if (diagram.type === 'raster') {
+            return `<img src="${diagram.src}" alt="Diagrama" style="max-width: 100%; height: auto; display: block; margin: 0 auto; background: white; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" />`;
+        }
+        return '';
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const icons = {
+            check: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>`,
+            x: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`
+        };
+        const summaries = {
+  "ai-cat-1760926472379-0": {
+    "title": "Probabilidad Condicional y Total",
+    "key_concepts_html": "<p>Esta categoría explora los fundamentos de la <strong>probabilidad</strong>, centrándose en cómo la ocurrencia de un evento afecta la probabilidad de otro, así como en la combinación de eventos. Los conceptos clave incluyen:</p><ul>    <li><strong>Probabilidad de un Evento (P(A))</strong>: La medida de la posibilidad de que un evento ocurra.</li>    <li><strong>Probabilidad del Complemento</strong>: Si \\(A^c\\) es el complemento de \\(A\\), entonces \\(P(A^c) = 1 - P(A)\\). Esta regla es fundamental para derivar probabilidades de eventos \"no ocurren\".</li>    <li><strong>Probabilidad de la Intersección (\\(P(A \\cap B)\\))</strong>: La probabilidad de que dos eventos, \\(A\\) y \\(B\\), ocurran simultáneamente. Se calcula usando la fórmula general \\(P(A \\cap B) = P(A | B) \\cdot P(B)\\). Para eventos independientes, se simplifica a \\(P(A \\cap B) = P(A) \\cdot P(B)\\).</li>    <li><strong>Probabilidad de la Unión (\\(P(A \\cup B)\\))</strong>: La probabilidad de que ocurra al menos uno de los eventos, \\(A\\) o \\(B\\).        <ul>            <li>Para eventos <strong>mutuamente excluyentes</strong> (no pueden ocurrir ambos a la vez), \\(P(A \\cup B) = P(A) + P(B)\\).</li>            <li>Para eventos <strong>no excluyentes</strong> (pueden ocurrir ambos), \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\).</li>        </ul>    </li>    <li><strong>Probabilidad Condicional (P(A | B))</strong>: La probabilidad de que ocurra el evento \\(A\\) dado que el evento \\(B\\) ya ha ocurrido. La fórmula es \\(P(A | B) = \\frac{P(A \\cap B)}{P(B)}\\), siempre que \\(P(B) > 0\\). Es crucial identificar correctamente el evento condicionante para aplicarla.</li></ul><p>La resolución de problemas en esta sección requiere una cuidadosa traducción del lenguaje natural a la notación matemática, la aplicación correcta de las fórmulas y, a menudo, el uso de la regla del complemento para encontrar datos necesarios.</p>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  },
+  "ai-cat-1760926472379-1": {
+    "title": "Suficiencia de Datos",
+    "key_concepts_html": "<p>La categoría de <strong>Suficiencia de Datos</strong> evalúa la habilidad para discernir si una o más afirmaciones proporcionan información suficiente para resolver una pregunta específica de probabilidad. Para abordar estos problemas de manera efectiva, considere lo siguiente:</p><ul>    <li><strong>Definición de Probabilidad</strong>: Para calcular la probabilidad de un evento \\(A\\) mediante la regla de Laplace, \\(P(A) = \\frac{\\text{número de casos favorables}}{\\text{número de casos totales}}\\), es esencial conocer tanto el número de elementos en \\(A\\) como el tamaño total del espacio muestral, y asumir (o que se declare) que los resultados son <strong>equiprobables</strong>.</li>    <li><strong>Concepto de Evento Seguro</strong>: Un evento seguro es aquel que contiene todos los posibles resultados del espacio muestral. Por definición, la probabilidad de un evento seguro es siempre \\(1\\).</li>    <li><strong>Probabilidad del Complemento</strong>: La probabilidad de que un evento \\(A\\) no ocurra es \\(P(A^c) = 1 - P(A)\\). Si se conoce la probabilidad de un evento, se puede determinar la del complemento.</li>    <li><strong>Eventos Independientes</strong>: Si dos eventos, \\(A\\) y \\(B\\), son independientes, la probabilidad de que ambos ocurran es \\(P(A \\cap B) = P(A) \\cdot P(B)\\). Esto también se extiende a la probabilidad de que sus complementos ocurran, \\(P(A^c \\cap B^c) = P(A^c) \\cdot P(B^c)\\).</li>    <li><strong>Relaciones entre Variables</strong>: En ocasiones, no es necesario conocer los valores exactos de las cantidades, sino establecer una relación entre ellas. Por ejemplo, si el número de bolitas rojas es igual al de bolitas blancas (\\(R=B\\)), esta relación puede ser suficiente para determinar una probabilidad como una fracción.</li></ul><p>La estrategia principal consiste en analizar cada enunciado por separado, y luego ambos juntos, para ver si se puede llegar a una solución única y sin ambigüedades. No es suficiente llegar a una expresión con incógnitas; se debe poder obtener un valor numérico concreto.</p>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  },
+  "ai-cat-1760926472379-2": {
+    "title": "Técnicas de Conteo y Combinatoria",
+    "key_concepts_html": "<p>La categoría de <strong>Técnicas de Conteo y Combinatoria</strong> se enfoca en la cuantificación de las maneras en que pueden ocurrir eventos, lo cual es fundamental para calcular probabilidades mediante la regla de Laplace. Los principios clave son:</p><ul>    <li><strong>Principio Multiplicativo</strong>: Si un proceso se compone de una secuencia de \\(k\\) decisiones, y hay \\(n_1\\) formas de tomar la primera decisión, \\(n_2\\) formas de tomar la segunda, y así sucesivamente hasta \\(n_k\\) formas para la \\(k\\)-ésima decisión, entonces el número total de maneras de realizar el proceso completo es \\(n_1 \\times n_2 \\times \\dots \\times n_k\\). Es útil para contar combinaciones de elementos de distintos conjuntos (e.g., elegir una polera Y un pantalón).</li>    <li><strong>Permutaciones</strong>: Se utilizan cuando el <strong>orden de los elementos es importante</strong>. La fórmula para permutar \\(n\\) objetos distintos es \\(n!\\) (n factorial). Si se seleccionan \\(k\\) objetos de \\(n\\) y el orden importa, se usa \\(P(n, k) = \\frac{n!}{(n-k)!}\\).</li>    <li><strong>Combinaciones</strong>: Se aplican cuando el <strong>orden de los elementos NO importa</strong>. La fórmula para elegir \\(k\\) objetos de un conjunto de \\(n\\) objetos distintos es \\(C(n, k) = \\binom{n}{k} = \\frac{n!}{k!(n-k)!}\\). Esto es crucial para formar \"grupos\" o \"subconjuntos\" sin considerar la secuencia de selección.</li>    <li><strong>Cálculo de Probabilidad</strong>: Una vez que se dominan las técnicas de conteo, la probabilidad de un evento se determina como la razón entre el número de casos favorables (contados con las técnicas apropiadas) y el número total de casos posibles (también contados con técnicas de conteo).</li></ul><p>Es vital identificar si en un problema el orden de selección de los elementos es relevante o no, ya que esto dictará si se deben usar permutaciones o combinaciones. Además, para los casos favorables, a menudo se combinan diferentes principios (e.g., elegir hombres Y mujeres).</p>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  },
+  "ai-cat-1760926472379-3": {
+    "title": "Aplicaciones y Conceptos Teóricos",
+    "key_concepts_html": "<p>La sección de <strong>Aplicaciones y Conceptos Teóricos</strong> profundiza en la comprensión conceptual de la probabilidad y su aplicación en diversos contextos. Los temas cubiertos incluyen:</p><ul>    <li><strong>Concepto de Evento Seguro</strong>: Un evento que, por definición, siempre ocurre en cualquier realización del experimento aleatorio. Su probabilidad es igual a \\(1\\).</li>    <li><strong>Concepto de Evento Imposible</strong>: Un evento que nunca ocurre. Su probabilidad es igual a \\(0\\).</li>    <li><strong>Propiedades Básicas de la Probabilidad</strong>: La probabilidad de cualquier evento siempre estará entre \\(0\\) y \\(1\\), inclusive.</li>    <li><strong>Regla del Complemento</strong>: Para cualquier evento \\(A\\), la probabilidad de que no ocurra, \\(P(A^c)\\), es \\(1 - P(A)\\). Esta regla es fundamental para muchos cálculos.</li>    <li><strong>Eventos Independientes</strong>: Dos eventos \\(A\\) y \\(B\\) son independientes si la ocurrencia de uno no influye en la probabilidad de ocurrencia del otro. Matemáticamente, esto se expresa como \\(P(A \\cap B) = P(A) \\cdot P(B)\\) o \\(P(A | B) = P(A)\\) y \\(P(B | A) = P(B)\\). Esta propiedad también se aplica a los complementos de eventos independientes.</li>    <li><strong>Tablas de Contingencia</strong>: Son herramientas visuales para organizar datos categóricos y calcular probabilidades. Permiten identificar fácilmente:        <ul>            <li><strong>Probabilidades conjuntas</strong> (e.g., \\(P(\\text{Hombre y Fumador}))\\)), donde el denominador es el total general.</li>            <li><strong>Probabilidades condicionales</strong> (e.g., \\(P(\\text{Fumador | Mujer}))\\)), donde el denominador es el total de la categoría condicionante.</li>        </ul>    </li></ul><p>La clave para esta categoría es no solo aplicar las fórmulas, sino también interpretar correctamente los enunciados y las estructuras de datos para identificar el tipo de probabilidad que se pide y la información relevante para su cálculo.</p>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  }
+};
+        const allProblemsData = [
+  {
+    "text": "Cuando llueve, la probabilidad de que una jugadora de fútbol anote un gol es \\(1/4\\). Si la probabilidad de que no llueva es \\(2/3\\), ¿cuál es la probabilidad de que llueva y la jugadora haga un gol?",
+    "options": [
+      {
+        "text": "1/6"
+      },
+      {
+        "text": "1/12"
+      },
+      {
+        "text": "10/14"
+      },
+      {
+        "text": "1/4"
+      }
+    ],
+    "correct": 1,
+    "explanation": "Se definen los eventos \\(L\\): \"llueve\" y \\(G\\): \"la jugadora anota un gol\". Los datos son \\(P(G | L) = 1/4\\) y \\(P(L^c) = 2/3\\). De la probabilidad del complemento, \\(P(L) = 1 - P(L^c) = 1 - 2/3 = 1/3\\). La pregunta es \\(P(L \\cap G)\\). Usando la fórmula de la probabilidad de la intersección para eventos dependientes, \\(P(L \\cap G) = P(G | L) \\cdot P(L) = (1/4) \\cdot (1/3) = 1/12\\).",
+    "hints": [
+      "¿Qué significa que la probabilidad de un evento no ocurra? ¿Cómo se relaciona \\(P(\\text{No A})\\) con \\(P(A))\\)?"
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "1",
+    "internalId": "q-1760926472379-0.09465819617764115",
+    "id": "q-ai-cat-1760926472379-0-0"
+  },
+  {
+    "text": "En cierto experimento aleatorio, se definen los eventos A y B tal que la probabilidad que no ocurra A es 16/21 y la probabilidad que no ocurra B es 16/35. Si se sabe además que la probabilidad de que ocurra B dado que ocurre A es 7/25, entonces ¿cuál es el valor de \\(P(A \\cup B)\\)?",
+    "options": [
+      {
+        "text": "1/15"
+      },
+      {
+        "text": "16/75"
+      },
+      {
+        "text": "82/105"
+      },
+      {
+        "text": "5/7"
+      }
+    ],
+    "correct": 3,
+    "explanation": "Primero, calculamos \\(P(A) = 1 - P(A^c) = 1 - 16/21 = 5/21\\) y \\(P(B) = 1 - P(B^c) = 1 - 16/35 = 19/35\\). Luego, usando la fórmula de probabilidad condicional, despejamos la intersección: \\(P(A \\cap B) = P(B | A) \\cdot P(A) = (7/25) \\cdot (5/21) = 35/525 = 1/15\\). Finalmente, aplicamos la fórmula de la unión para eventos no excluyentes: \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B) = 5/21 + 19/35 - 1/15\\). El mínimo común múltiplo es 105, entonces \\(P(A \\cup B) = 25/105 + 57/105 - 7/105 = (25 + 57 - 7)/105 = 75/105 = 5/7\\).",
+    "hints": [
+      "Recuerda las reglas del complemento y la fórmula general para la unión de dos eventos: \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\)."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "4",
+    "internalId": "q-1760926472379-0.8468237610266859",
+    "id": "q-ai-cat-1760926472379-0-1"
+  },
+  {
+    "text": "La probabilidad de que en Santiago truene durante una tarde cuando llueve es de \\(0,6\\). Si en la misma ciudad la probabilidad de que llueva y truene en una tarde es de \\(0,15\\), ¿cuál es la probabilidad de que llueva en una tarde?",
+    "options": [
+      {
+        "text": "0,025"
+      },
+      {
+        "text": "0,09"
+      },
+      {
+        "text": "0,21"
+      },
+      {
+        "text": "0,25"
+      }
+    ],
+    "correct": 3,
+    "explanation": "Definimos los eventos \\(T\\): \"truena\" y \\(L\\): \"llueve\". Los datos son \\(P(T | L) = 0,6\\) y \\(P(L \\cap T) = 0,15\\). La pregunta es \\(P(L)\\). Usando la fórmula de probabilidad condicional, \\(P(T | L) = \\frac{P(L \\cap T)}{P(L)}\\). Despejando \\(P(L)\\), obtenemos \\(P(L) = \\frac{P(L \\cap T)}{P(T | L)}\\). Sustituyendo los valores, \\(P(L) = \\frac{0,15}{0,6} = \\frac{15}{60} = \\frac{1}{4} = 0,25\\).",
+    "hints": [
+      "¿Qué significa la frase 'cuando llueve' en términos de probabilidad? ¿Qué tipo de probabilidad te están dando con ese dato?"
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "12",
+    "internalId": "q-1760926472379-0.2585102977388104",
+    "id": "q-ai-cat-1760926472379-0-2"
+  },
+  {
+    "text": "En un curso de primer año de universidad se elige un estudiante al azar, la probabilidad de que sea mujer o haya aprobado el curso es \\(0,8\\), la probabilidad de que sea de género femenino es \\(0,5\\). Si la probabilidad de que sea mujer y haya aprobado el curso es \\(0,1\\), ¿cuál es la probabilidad de elegir a alguien que haya aprobado el curso?",
+    "options": [
+      {
+        "text": "0,1"
+      },
+      {
+        "text": "0,2"
+      },
+      {
+        "text": "0,3"
+      },
+      {
+        "text": "0,4"
+      }
+    ],
+    "correct": 3,
+    "explanation": "Definimos los eventos \\(M\\): \"ser mujer\" y \\(A\\): \"haber aprobado el curso\". Los datos son \\(P(M \\cup A) = 0,8\\), \\(P(M) = 0,5\\) y \\(P(M \\cap A) = 0,1\\). La pregunta es \\(P(A)\\). Usamos la fórmula de la unión para eventos no excluyentes: \\(P(M \\cup A) = P(M) + P(A) - P(M \\cap A)\\). Sustituyendo los valores conocidos: \\(0,8 = 0,5 + P(A) - 0,1\\). Simplificando, \\(0,8 = 0,4 + P(A)\\). Despejando \\(P(A)\\), obtenemos \\(P(A) = 0,8 - 0,4 = 0,4\\).",
+    "hints": [
+      "¿Cuál es la fórmula general para la probabilidad de la unión de dos eventos, \\(P(A \\cup B))\\)? ¿Incluye los casos en que ambos eventos ocurren?"
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "18",
+    "internalId": "q-1760926472379-0.8323284887902058",
+    "id": "q-ai-cat-1760926472379-0-3"
+  },
+  {
+    "text": "Dado el espacio muestral \\(E = \\{a, b, c, d\\}\\), se puede determinar el valor de \\(P(A)\\) si se sabe que: (1) \\(A = \\{a, c\\}\\). (2) Todos los elementos de \\(E\\) son equiprobables.",
+    "options": [
+      {
+        "text": "(1) por sí sola"
+      },
+      {
+        "text": "(2) por sí sola"
+      },
+      {
+        "text": "Ambas juntas, (1) y (2)"
+      },
+      {
+        "text": "Cada una por sí sola, (1) ó (2)"
+      },
+      {
+        "text": "Se requiere información adicional"
+      }
+    ],
+    "correct": 2,
+    "explanation": "Para calcular la probabilidad \\(P(A)\\) usando la regla de Laplace, necesitamos saber los elementos que componen \\(A\\) y si los elementos del espacio muestral son equiprobables. El enunciado (1) nos dice que \\(A = \\{a, c\\}\\), lo que implica 2 casos favorables. Sin embargo, no nos dice si los eventos son equiprobables. El enunciado (2) nos dice que los elementos son equiprobables, lo que significa que \\(P(a) = P(b) = P(c) = P(d) = 1/4\\), pero no nos dice qué elementos forman \\(A\\). Combinando (1) y (2), sabemos que \\(A\\) tiene 2 elementos y que cada elemento tiene una probabilidad de \\(1/4\\). Por lo tanto, \\(P(A) = P(a) + P(c) = 1/4 + 1/4 = 2/4 = 1/2\\). Ambas juntas son suficientes.",
+    "hints": [
+      "¿Qué dos condiciones fundamentales se requieren para calcular la probabilidad de un evento usando la regla de Laplace, \\(P(A) = \\frac{\\text{casos favorables}}{\\text{casos totales}}\\)?",
+      "Analiza el enunciado (1): ¿Sabes el total de resultados posibles o si cada resultado tiene la misma probabilidad? Analiza el enunciado (2): ¿Sabes qué elementos específicos componen el evento \\(A\\)?",
+      "Si (1) te da los casos favorables y (2) te asegura que cada caso elemental tiene la misma probabilidad (\\(1/\\text{total de elementos})\\)), ¿puedes combinar esta información para obtener un valor numérico único para \\(P(A)\\)?"
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "3",
+    "internalId": "q-1760926472379-0.8708494410296584",
+    "id": "q-ai-cat-1760926472379-1-0"
+  },
+  {
+    "text": "En una urna se colocan exclusivamente bolitas rojas, azules y blancas. Si el número de bolitas azules es el doble del número de bolitas blancas, entonces se puede determinar la probabilidad de sacar una bolita roja si se sabe que: (1) La urna contiene 60 bolitas. (2) El número de bolitas blancas es igual al número de bolitas rojas.",
+    "options": [
+      {
+        "text": "(1) por sí sola"
+      },
+      {
+        "text": "(2) por sí sola"
+      },
+      {
+        "text": "Ambas juntas, (1) y (2)"
+      },
+      {
+        "text": "Cada una por sí sola, (1) ó (2)"
+      },
+      {
+        "text": "Se requiere información adicional"
+      }
+    ],
+    "correct": 1,
+    "explanation": "Definimos \\(R\\), \\(A\\), \\(B\\) como el número de bolitas rojas, azules y blancas, respectivamente. Del enunciado principal, sabemos que \\(A = 2B\\). La probabilidad de sacar una bolita roja es \\(P(\\text{Roja}) = \\frac{R}{R + A + B}\\). Sustituyendo \\(A = 2B\\), obtenemos \\(P(\\text{Roja}) = \\frac{R}{R + 2B + B} = \\frac{R}{R + 3B}\\). Analizando (1): \\(R + A + B = 60 \\implies R + 3B = 60\\). Entonces, \\(P(\\text{Roja}) = \\frac{R}{60}\\). Como \\(R\\) es desconocido, (1) no es suficiente. Analizando (2): \\(B = R\\). Sustituyendo esto en la expresión de probabilidad: \\(P(\\text{Roja}) = \\frac{R}{R + 3R} = \\frac{R}{4R} = 1/4\\). Aquí obtenemos un valor único. Por lo tanto, (2) por sí sola es suficiente.",
+    "hints": [
+      "¿Cuál es la expresión general para la probabilidad de sacar una bolita roja en términos de \\(R\\), \\(A\\), \\(B\\)? ¿Cómo puedes simplificar esta expresión inicial usando la relación \\(A=2B\\)?",
+      "Con la expresión simplificada \\(P(\\text{Roja}) = \\frac{R}{R + 3B}\\), prueba cada enunciado. Si el enunciado te permite encontrar un valor numérico para esta fracción, es suficiente.",
+      "El enunciado (1) te da el denominador (\\(R+3B=60)\\)), pero el numerador (\\(R)\\)) sigue siendo una incógnita. El enunciado (2) te da una relación (\\(B=R)\\)) que te permite expresar todo en términos de una sola variable, por ejemplo, \\(R/(R+3R))\\)."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "6",
+    "internalId": "q-1760926472379-0.6167993782019087",
+    "id": "q-ai-cat-1760926472379-1-1"
+  },
+  {
+    "text": "En una urna se tienen exclusivamente bolitas blancas y negras... número de bolitas blancas es \\(m\\) y... negras es \\(n\\), se puede determinar la probabilidad de sacar una bolita negra si se sabe que: (1) \\(m + n = 2n\\) (2) \\(m + n = 10\\)",
+    "options": [
+      {
+        "text": "(1) por sí sola"
+      },
+      {
+        "text": "(2) por sí sola"
+      },
+      {
+        "text": "Ambas juntas, (1) y (2)"
+      },
+      {
+        "text": "Cada una por sí sola, (1) ó (2)"
+      },
+      {
+        "text": "Se requiere información adicional"
+      }
+    ],
+    "correct": 0,
+    "explanation": "La probabilidad de sacar una bolita negra es \\(P(\\text{Negra}) = \\frac{n}{m + n}\\). Analizando (1): \\(m + n = 2n\\). Restando \\(n\\) de ambos lados, obtenemos \\(m = n\\). Sustituyendo \\(m = n\\) en la expresión de probabilidad: \\(P(\\text{Negra}) = \\frac{n}{n + n} = \\frac{n}{2n} = 1/2\\). Con (1) se puede determinar un valor único. Analizando (2): \\(m + n = 10\\). Sustituyendo esto en la expresión de probabilidad: \\(P(\\text{Negra}) = \\frac{n}{10}\\). Como el valor de \\(n\\) no se conoce, (2) no es suficiente. Por lo tanto, (1) por sí sola es suficiente.",
+    "hints": [
+      "¿Cuál es la expresión para la probabilidad de sacar una bolita negra en términos de \\(m\\) y \\(n\\)? ¿Qué necesitas para que esta expresión tenga un valor numérico único?",
+      "Considera el enunciado (1): Si \\(m+n=2n\\), ¿qué relación se puede deducir entre \\(m\\) y \\(n\\)? ¿Es esta relación suficiente para calcular la probabilidad?",
+      "Con la relación de (1), sustituye \\(m\\) en la probabilidad \\(P(\\text{Negra}) = n / (m+n))\\) y simplifica. Para (2), si solo sabes \\(m+n=10\\), ¿es el valor de \\(n\\) único?"
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "7",
+    "internalId": "q-1760926472379-0.398817432700477",
+    "id": "q-ai-cat-1760926472379-1-2"
+  },
+  {
+    "text": "Es posible determinar la probabilidad de obtener sello al lanzar una moneda cargada, si se sabe que: (1) La probabilidad de obtener cara al lanzar dicha moneda es \\(2/3\\). (2) La probabilidad de obtener dos sellos consecutivos al lanzar dicha moneda es \\(1/9\\).",
+    "options": [
+      {
+        "text": "(1) por sí sola"
+      },
+      {
+        "text": "(2) por sí sola"
+      },
+      {
+        "text": "Ambas juntas, (1) y (2)"
+      },
+      {
+        "text": "Cada una por sí sola, (1) ó (2)"
+      },
+      {
+        "text": "Se requiere información adicional"
+      }
+    ],
+    "correct": 3,
+    "explanation": "El objetivo es determinar \\(P(\\text{Sello})\\). Analizando (1): \\(P(\\text{Cara}) = 2/3\\). Dado que solo hay dos resultados (Cara o Sello), \\(P(\\text{Sello}) = 1 - P(\\text{Cara}) = 1 - 2/3 = 1/3\\). (1) es suficiente. Analizando (2): La probabilidad de dos sellos consecutivos es \\(P(\\text{Sello y Sello})\\). Si los lanzamientos son eventos independientes, \\(P(\\text{Sello y Sello}) = P(\\text{Sello}) \\cdot P(\\text{Sello}) = [P(\\text{Sello})]^2\\). Se nos da que \\([P(\\text{Sello})]^2 = 1/9\\). Tomando la raíz cuadrada, \\(P(\\text{Sello}) = \\sqrt{1/9} = 1/3\\). (2) es suficiente. Como ambos enunciados son suficientes por sí solos, la respuesta es \"Cada una por sí sola, (1) ó (2).\"",
+    "hints": [
+      "¿Qué relación existe entre la probabilidad de un evento y la probabilidad de su complemento? Para una moneda, si conoces \\(P(\\text{Cara})\\), ¿puedes encontrar \\(P(\\text{Sello}))\\)?",
+      "Considera el enunciado (2). Si los lanzamientos son independientes, ¿cómo se calcula la probabilidad de obtener dos sellos consecutivos? ¿Qué operación matemática te permite despejar \\(P(\\text{Sello}))\\)?",
+      "Para (1), usa la fórmula \\(P(\\text{Sello}) = 1 - P(\\text{Cara}))\\). Para (2), si \\(P(\\text{Sello})^2 = 1/9\\), ¿qué operación debes realizar para encontrar \\(P(\\text{Sello}))\\)?"
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "24",
+    "internalId": "q-1760926472379-0.31961982827395163",
+    "id": "q-ai-cat-1760926472379-1-3"
+  },
+  {
+    "text": "En un curso de 40 estudiantes hay 15 hombres y 25 mujeres. Si se escoge al azar un grupo de 5 integrantes, ¿cuál es la probabilidad de que esté formado por 3 mujeres y 2 hombres?",
+    "options": [
+      {
+        "text": "\\(5! \\binom{15}{4}\\)"
+      },
+      {
+        "text": "\\(\\frac{25 \\cdot 24 \\cdot 23 \\cdot 15 \\cdot 14}{40 \\cdot 39 \\cdot 38 \\cdot 37 \\cdot 36}\\)"
+      },
+      {
+        "text": "\\(5! \\cdot \\frac{25 \\cdot 24 \\cdot 23 \\cdot 15 \\cdot 14}{40 \\cdot 39 \\cdot 38 \\cdot 37 \\cdot 36}\\)"
+      },
+      {
+        "text": "\\(5! \\binom{25}{3}\\binom{15}{2}\\)"
+      },
+      {
+        "text": "\\( \\frac{\\binom{25}{3}\\binom{15}{2}}{\\binom{40}{5}} \\)"
+      }
+    ],
+    "correct": 4,
+    "explanation": "Para resolver este problema, utilizamos combinaciones porque el orden en que se eligen los estudiantes para formar el grupo no importa. El total de formas de elegir un grupo de 5 estudiantes de 40 es \\(\\binom{40}{5}\\). Los casos favorables son elegir 3 mujeres de 25 y 2 hombres de 15. Esto se calcula como \\(\\binom{25}{3} \\cdot \\binom{15}{2}\\). Por lo tanto, la probabilidad es la razón entre los casos favorables y los casos totales: \\(P(\\text{3 mujeres y 2 hombres}) = \\frac{\\binom{25}{3} \\cdot \\binom{15}{2}}{\\binom{40}{5}}\\\\).",
+    "hints": [
+      "¿Importa el orden en que se seleccionan los estudiantes para formar un grupo? Si no importa el orden, ¿qué técnica de conteo debes usar (permutaciones o combinaciones)?",
+      "Calcula el número total de formas de elegir un grupo de 5 estudiantes de 40. Luego, calcula el número de formas de elegir 3 mujeres de 25 Y 2 hombres de 15, usando el principio multiplicativo.",
+      "Recuerda que la probabilidad es la relación entre los casos favorables y los casos totales. La notación para combinaciones es \\(\\binom{n}{k}\\). Tu respuesta debería ser una fracción de combinaciones."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "8",
+    "internalId": "q-1760926472379-0.024483496897363843",
+    "id": "q-ai-cat-1760926472379-2-0"
+  },
+  {
+    "text": "Una caja contiene 8 bolas rojas, 3 blancas, y 9 azules. Si se extraen 3 bolas al azar, ¿Cuál es la probabilidad de que las tres bolas sean azules?",
+    "options": [
+      {
+        "text": "9/20"
+      },
+      {
+        "text": "3/20"
+      },
+      {
+        "text": "\\( \\frac{\\binom{9}{3}}{\\binom{20}{3}} \\)"
+      },
+      {
+        "text": "\\( \\frac{\\binom{12}{3}}{\\binom{20}{3}} \\)"
+      },
+      {
+        "text": "\\( \\frac{9^3}{20^3} \\)"
+      }
+    ],
+    "correct": 2,
+    "explanation": "En este problema, las extracciones \"al azar\" sin reemplazo y sin importar el orden implican el uso de combinaciones. El número total de bolas es \\(8+3+9 = 20\\). El total de formas de extraer 3 bolas de 20 es \\(\\binom{20}{3}\\). El número de formas de extraer 3 bolas azules de las 9 azules disponibles es \\(\\binom{9}{3}\\). Por lo tanto, la probabilidad de que las tres bolas sean azules es \\(P(\\text{3 Azules}) = \\frac{\\binom{9}{3}}{\\binom{20}{3}}\\\\).",
+    "hints": [
+      "Al extraer varias bolas 'al azar' y simultáneamente (o sin importar el orden), ¿qué técnica de conteo es la más apropiada: permutaciones o combinaciones?",
+      "Primero, determina el número total de bolas en la caja. Luego, calcula el número total de formas de extraer 3 bolas de ese total. Después, calcula el número de formas de extraer 3 bolas del color específico (azules).",
+      "La probabilidad es la división de los casos favorables entre los casos totales. Usa la notación \\(\\binom{n}{k}\\) para las combinaciones. Asegúrate de que el numerador y el denominador reflejen el conteo correcto."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "9",
+    "internalId": "q-1760926472379-0.26795286140749686",
+    "id": "q-ai-cat-1760926472379-2-1"
+  },
+  {
+    "text": "Juan le regala a Pedro 5 poleras distintas y 3 pantalones distintos. Si a Pedro no le gustan una de las poleras y uno de los pantalones, ¿cuál es la probabilidad de que al vestirse eligiendo 1 pantalón y 1 polera al azar, la vestimenta sea de su completo agrado?",
+    "options": [
+      {
+        "text": "1/15"
+      },
+      {
+        "text": "1/5"
+      },
+      {
+        "text": "1/3"
+      },
+      {
+        "text": "8/15"
+      },
+      {
+        "text": "2/3"
+      }
+    ],
+    "correct": 3,
+    "explanation": "Primero, calculamos el total de atuendos posibles. Pedro tiene 5 poleras y 3 pantalones, por lo que el total de combinaciones es \\(5 \\times 3 = 15\\). Luego, calculamos los atuendos de su agrado. Si no le gusta 1 polera, le gustan \\(5 - 1 = 4\\) poleras. Si no le gusta 1 pantalón, le gustan \\(3 - 1 = 2\\) pantalones. El número de atuendos de su agrado es \\(4 \\times 2 = 8\\). La probabilidad es la razón entre los atuendos de su agrado y el total de atuendos posibles: \\(P(\\text{Agrado}) = \\frac{8}{15}\\).",
+    "hints": [
+      "¿Cómo se calcula el número total de combinaciones posibles al elegir un elemento de un conjunto y otro elemento de otro conjunto? (Principio multiplicativo).",
+      "Determina cuántas poleras le gustan a Pedro y cuántos pantalones le gustan. Luego, utiliza el principio multiplicativo para encontrar cuántas combinaciones de polera y pantalón son de su agrado.",
+      "Calcula los casos totales (\\(\\text{poleras disponibles} \\times \\text{pantalones disponibles}\\)). Calcula los casos favorables ((\\(\\text{poleras de agrado}\\) \\times \\(\\text{pantalones de agrado}\\))). La probabilidad es la división de estos dos valores."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "10",
+    "internalId": "q-1760926472379-0.7611635260471252",
+    "id": "q-ai-cat-1760926472379-2-2"
+  },
+  {
+    "text": "Se ordenan aleatoriamente en una fila cuatro bolitas de colores verde, rojo, blanco y azul, ¿cuál es la probabilidad de que las bolitas de colores rojo y blanco queden al centro?",
+    "options": [
+      {
+        "text": "1/4"
+      },
+      {
+        "text": "1/3"
+      },
+      {
+        "text": "1/2"
+      },
+      {
+        "text": "1/6"
+      }
+    ],
+    "correct": 3,
+    "explanation": "El número total de formas de ordenar 4 bolitas distintas es \\(4! = 4 \\times 3 \\times 2 \\times 1 = 24\\). Para los casos favorables, las bolitas rojo (\\(R)\\)) y blanco (\\(B)\\)) deben estar en las dos posiciones centrales. Hay \\(2!\\) formas de ordenar \\(R\\) y \\(B\\) en esas dos posiciones (RB o BR). Las dos bolitas restantes (verde (\\(V)\\)) y azul (\\(A)\\)) deben ocupar las dos posiciones de los extremos. Hay \\(2!\\) formas de ordenar \\(V\\) y \\(A\\) en esas posiciones. Así, los casos favorables son \\(2! \\times 2! = 2 \\times 2 = 4\\). La probabilidad es \\(\\frac{\\text{casos favorables}}{\\text{casos totales}} = \\frac{4}{24} = 1/6\\).",
+    "hints": [
+      "¿Cómo se calcula el número total de maneras de ordenar \\(n\\) objetos distintos en una fila? (Factorial).",
+      "Para los casos favorables, considera que las dos bolitas restringidas deben ir al centro. ¿De cuántas formas pueden estas dos bolitas ocupan esos dos puestos? ¿De cuántas formas pueden las bolitas restantes ocupar los puestos restantes?",
+      "Calcula el total de permutaciones (\\(4!\\)). Luego, calcula las permutaciones de las bolitas centrales (\\(2!\\)) y las permutaciones de las bolitas de los extremos (\\(2!\\)). Multiplica estos últimos para obtener los casos favorables. Finalmente, divide."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "22",
+    "internalId": "q-1760926472379-0.48226293326524605",
+    "id": "q-ai-cat-1760926472379-2-3"
+  },
+  {
+    "text": "Se puede calcular el valor de \\(P(A)\\), si se sabe que: (1) \\(A\\) es un evento seguro. (2) \\(A\\) contiene cinco elementos del espacio muestral.",
+    "options": [
+      {
+        "text": "(1) por sí sola"
+      },
+      {
+        "text": "(2) por sí sola"
+      },
+      {
+        "text": "Ambas juntas, (1) y (2)"
+      },
+      {
+        "text": "Cada una por sí sola, (1) ó (2)"
+      },
+      {
+        "text": "Se requiere información adicional"
+      }
+    ],
+    "correct": 0,
+    "explanation": "Un evento seguro es aquel que siempre ocurre en un experimento aleatorio y, por definición, su probabilidad es \\(1\\). Por lo tanto, el enunciado (1) por sí solo es suficiente para determinar \\(P(A) = 1\\). El enunciado (2) indica que el evento \\(A\\) contiene cinco elementos, pero no proporciona información sobre el tamaño total del espacio muestral ni si los eventos son equiprobables, por lo que no es suficiente para calcular una probabilidad numérica única.",
+    "hints": [
+      "¿Cuál es la definición de un 'evento seguro' en probabilidad? ¿Qué valor de probabilidad se le asigna universalmente a un evento seguro?",
+      "Considera el enunciado (2). Si sabes que un evento contiene 5 elementos, ¿es suficiente para calcular su probabilidad sin saber cuántos elementos hay en total en el espacio muestral o si son equiprobables?",
+      "Si (1) te da la definición de un evento con una probabilidad fija por axioma, esa información es directa y completa. Compara eso con (2), que solo te da una cantidad de elementos sin un contexto total."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "2",
+    "internalId": "q-1760926472379-0.16376053847698935",
+    "id": "q-ai-cat-1760926472379-3-0"
+  },
+  {
+    "text": "La siguiente tabla muestra la condición de fumador o no fumador de un grupo de 80 personas... ¿cuál de las siguientes afirmaciones es falsa?<br><table><thead><tr><th></th><th>Fumadores</th><th>No fumadores</th></tr></thead><tbody><tr><td><strong>Hombres</strong></td><td>30</td><td>25</td></tr><tr><td><strong>Mujeres</strong></td><td>15</td><td>10</td></tr></tbody></table>",
+    "options": [
+      {
+        "text": "La probabilidad de que sea mujer y no fumadora es 1/8."
+      },
+      {
+        "text": "La probabilidad de que fume dado que es mujer es 1/3."
+      },
+      {
+        "text": "La probabilidad de que sea hombre dado que la persona fuma es 2/3."
+      },
+      {
+        "text": "La probabilidad de que no fume dado que es hombre es 5/11."
+      }
+    ],
+    "correct": 1,
+    "explanation": "Primero, completamos la tabla con los totales: Total de Hombres = \\(30+25=55\\), Total de Mujeres = \\(15+10=25\\), Total de Fumadores = \\(30+15=45\\), Total de No Fumadores = \\(25+10=35\\). El total general es \\(55+25 = 80\\). Evaluamos cada opción: A) \\(P(\\text{Mujer y No Fumadora}) = 10/80 = 1/8\\). (Verdadera). B) \\(P(\\text{Fume | Mujer}) = \\frac{\\text{Mujeres Fumadoras}}{\\text{Total Mujeres}} = 15/25 = 3/5\\). La afirmación dice \\(1/3\\), lo cual es falso, ya que \\(3/5 \\ne 1/3\\). C) \\(P(\\text{Hombre | Fuma}) = \\frac{\\text{Hombres Fumadores}}{\\text{Total Fumadores}} = 30/45 = 2/3\\). (Verdadera). D) \\(P(\\text{No Fume | Hombre}) = \\frac{\\text{Hombres No Fumadores}}{\\text{Total Hombres}} = 25/55 = 5/11\\). (Verdadera). Por lo tanto, la afirmación falsa es B.",
+    "hints": [
+      "Antes de evaluar las opciones, completa la tabla de contingencia calculando los totales de fila y columna, y el total general. Esto te facilitará todos los cálculos.",
+      "Diferencia claramente entre probabilidades conjuntas (que utilizan el total general en el denominador, e.g., \\(P(\\text{A y B}))\\)) y probabilidades condicionales (que utilizan el total de la condición en el denominador, e.g., \\(P(\\text{A | B}))\\)).",
+      "Para cada opción, calcula la probabilidad solicitada usando los totales de la tabla y compara tu resultado con el valor proporcionado en la afirmación. La que no coincida será la respuesta correcta."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "14",
+    "internalId": "q-1760926472379-0.9777228710298862",
+    "id": "q-ai-cat-1760926472379-3-1"
+  },
+  {
+    "text": "Se sabe que el 40% de la población fuma y el 10% fuma y es hipertensa. ¿Cuál es la probabilidad de que un fumador sea hipertenso?",
+    "options": [
+      {
+        "text": "4%"
+      },
+      {
+        "text": "10%"
+      },
+      {
+        "text": "25%"
+      },
+      {
+        "text": "40%"
+      },
+      {
+        "text": "50%"
+      }
+    ],
+    "correct": 2,
+    "explanation": "Definimos los eventos \\(F\\): \"la persona fuma\" y \\(H\\): \"la persona es hipertensa\". Los datos son \\(P(F) = 0,40\\) (40%) y \\(P(F \\cap H) = 0,10\\) (10%). La pregunta es la probabilidad de que una persona sea hipertensa dado que es fumadora, es decir, \\(P(H | F)\\). Usamos la fórmula de probabilidad condicional: \\(P(H | F) = \\frac{P(F \\cap H)}{P(F)}\\). Sustituyendo los valores, \\(P(H | F) = \\frac{0,10}{0,40} = \\frac{1}{4} = 0,25\\). Expresado en porcentaje, es \\(25\\%\\).",
+    "hints": [
+      "¿Qué tipo de probabilidad se está pidiendo? La frase '¿cuál es la probabilidad de que UN FUMADOR sea hipertenso?' indica que el espacio muestral se ha restringido.",
+      "Identifica los eventos \\(F\\) (fuma) y \\(H\\) (hipertenso) y escribe las probabilidades dadas en notación matemática. ¿Cuál es la fórmula para \\(P(H | F))\\)?",
+      "Con \\(P(F) = 0,40\\) y \\(P(F \\cap H) = 0,10\\), sustituye estos valores en la fórmula \\(P(H | F) = \\frac{P(F \\cap H)}{P(F)}\\) y calcula el resultado. No olvides convertir a porcentaje si es necesario."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "17",
+    "internalId": "q-1760926472379-0.8461163447808328",
+    "id": "q-ai-cat-1760926472379-3-2"
+  },
+  {
+    "text": "A y B son dos eventos independientes. Si la probabilidad de que ocurra A es \\(p\\) y de que ocurra B es \\(q\\) ¿cuál es la probabilidad de que no ocurran ambos eventos?",
+    "options": [
+      {
+        "text": "\\((1 - p) q\\)"
+      },
+      {
+        "text": "\\(p (1 - q)\\)"
+      },
+      {
+        "text": "\\((1 – p) (1 – q)\\)"
+      },
+      {
+        "text": "\\(pq\\)"
+      },
+      {
+        "text": "\\(1 - pq\\)"
+      }
+    ],
+    "correct": 2,
+    "explanation": "La frase \"que no ocurran ambos eventos\" se interpreta como \"que no ocurra A Y que no ocurra B\", lo que se escribe como \\(P(A^c \\cap B^c)\\). Dado que \\(A\\) y \\(B\\) son eventos independientes, sus complementos \\(A^c\\) y \\(B^c\\) también son independientes. La probabilidad de un complemento es \\(P(A^c) = 1 - P(A) = 1 - p\\) y \\(P(B^c) = 1 - P(B) = 1 - q\\). Como \\(A^c\\) y \\(B^c\\) son independientes, \\(P(A^c \\cap B^c) = P(A^c) \\cdot P(B^c) = (1 - p)(1 - q)\\).",
+    "hints": [
+      "¿Cómo se interpreta la frase 'que no ocurran ambos eventos' en notación de probabilidad usando complementos y la operación 'y' (intersección)?",
+      "Si A y B son eventos independientes, ¿cómo se calcula la probabilidad de que no ocurra A (\\(A^c))\\))? ¿Y de que no ocurra B (\\(B^c))\\))? ¿Qué sabes sobre la independencia de los complementos?",
+      "Utiliza \\(P(A^c) = 1 - p\\) y \\(P(B^c) = 1 - q\\). Para eventos independientes, \\(P(A^c \\cap B^c) = P(A^c) \\cdot P(B^c))\\). Sustituye las expresiones de los complementos."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "21",
+    "internalId": "q-1760926472379-0.18882420053489402",
+    "id": "q-ai-cat-1760926472379-3-3"
+  }
+];
+        const categories = [
+  {
+    "id": "ai-cat-1760926472379-0",
+    "title": "Probabilidad Condicional y Total",
+    "description": "<p>Esta categoría explora los fundamentos de la <strong>probabilidad</strong>, centrándose en cómo la ocurrencia de un evento afecta la probabilidad de otro, así como en la combinación de eventos. Los conceptos clave incluyen:</p><ul>    <li><strong>Probabilidad de un Evento (P(A))</strong>: La medida de la posibilidad de que un evento ocurra.</li>    <li><strong>Probabilidad del Complemento</strong>: Si \\(A^c\\) es el complemento de \\(A\\), entonces \\(P(A^c) = 1 - P(A)\\). Esta regla es fundamental para derivar probabilidades de eventos \"no ocurren\".</li>    <li><strong>Probabilidad de la Intersección (\\(P(A \\cap B)\\))</strong>: La probabilidad de que dos eventos, \\(A\\) y \\(B\\), ocurran simultáneamente. Se calcula usando la fórmula general \\(P(A \\cap B) = P(A | B) \\cdot P(B)\\). Para eventos independientes, se simplifica a \\(P(A \\cap B) = P(A) \\cdot P(B)\\).</li>    <li><strong>Probabilidad de la Unión (\\(P(A \\cup B)\\))</strong>: La probabilidad de que ocurra al menos uno de los eventos, \\(A\\) o \\(B\\).        <ul>            <li>Para eventos <strong>mutuamente excluyentes</strong> (no pueden ocurrir ambos a la vez), \\(P(A \\cup B) = P(A) + P(B)\\).</li>            <li>Para eventos <strong>no excluyentes</strong> (pueden ocurrir ambos), \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\).</li>        </ul>    </li>    <li><strong>Probabilidad Condicional (P(A | B))</strong>: La probabilidad de que ocurra el evento \\(A\\) dado que el evento \\(B\\) ya ha ocurrido. La fórmula es \\(P(A | B) = \\frac{P(A \\cap B)}{P(B)}\\), siempre que \\(P(B) > 0\\). Es crucial identificar correctamente el evento condicionante para aplicarla.</li></ul><p>La resolución de problemas en esta sección requiere una cuidadosa traducción del lenguaje natural a la notación matemática, la aplicación correcta de las fórmulas y, a menudo, el uso de la regla del complemento para encontrar datos necesarios.</p>",
+    "summaryKey": "ai-cat-1760926472379-0",
+    "problem_ids": [
+      "q-ai-cat-1760926472379-0-0",
+      "q-ai-cat-1760926472379-0-1",
+      "q-ai-cat-1760926472379-0-2",
+      "q-ai-cat-1760926472379-0-3"
+    ]
+  },
+  {
+    "id": "ai-cat-1760926472379-1",
+    "title": "Suficiencia de Datos",
+    "description": "<p>La categoría de <strong>Suficiencia de Datos</strong> evalúa la habilidad para discernir si una o más afirmaciones proporcionan información suficiente para resolver una pregunta específica de probabilidad. Para abordar estos problemas de manera efectiva, considere lo siguiente:</p><ul>    <li><strong>Definición de Probabilidad</strong>: Para calcular la probabilidad de un evento \\(A\\) mediante la regla de Laplace, \\(P(A) = \\frac{\\text{número de casos favorables}}{\\text{número de casos totales}}\\), es esencial conocer tanto el número de elementos en \\(A\\) como el tamaño total del espacio muestral, y asumir (o que se declare) que los resultados son <strong>equiprobables</strong>.</li>    <li><strong>Concepto de Evento Seguro</strong>: Un evento seguro es aquel que contiene todos los posibles resultados del espacio muestral. Por definición, la probabilidad de un evento seguro es siempre \\(1\\).</li>    <li><strong>Probabilidad del Complemento</strong>: La probabilidad de que un evento \\(A\\) no ocurra es \\(P(A^c) = 1 - P(A)\\). Si se conoce la probabilidad de un evento, se puede determinar la del complemento.</li>    <li><strong>Eventos Independientes</strong>: Si dos eventos, \\(A\\) y \\(B\\), son independientes, la probabilidad de que ambos ocurran es \\(P(A \\cap B) = P(A) \\cdot P(B)\\). Esto también se extiende a la probabilidad de que sus complementos ocurran, \\(P(A^c \\cap B^c) = P(A^c) \\cdot P(B^c)\\).</li>    <li><strong>Relaciones entre Variables</strong>: En ocasiones, no es necesario conocer los valores exactos de las cantidades, sino establecer una relación entre ellas. Por ejemplo, si el número de bolitas rojas es igual al de bolitas blancas (\\(R=B\\)), esta relación puede ser suficiente para determinar una probabilidad como una fracción.</li></ul><p>La estrategia principal consiste en analizar cada enunciado por separado, y luego ambos juntos, para ver si se puede llegar a una solución única y sin ambigüedades. No es suficiente llegar a una expresión con incógnitas; se debe poder obtener un valor numérico concreto.</p>",
+    "summaryKey": "ai-cat-1760926472379-1",
+    "problem_ids": [
+      "q-ai-cat-1760926472379-1-0",
+      "q-ai-cat-1760926472379-1-1",
+      "q-ai-cat-1760926472379-1-2",
+      "q-ai-cat-1760926472379-1-3"
+    ]
+  },
+  {
+    "id": "ai-cat-1760926472379-2",
+    "title": "Técnicas de Conteo y Combinatoria",
+    "description": "<p>La categoría de <strong>Técnicas de Conteo y Combinatoria</strong> se enfoca en la cuantificación de las maneras en que pueden ocurrir eventos, lo cual es fundamental para calcular probabilidades mediante la regla de Laplace. Los principios clave son:</p><ul>    <li><strong>Principio Multiplicativo</strong>: Si un proceso se compone de una secuencia de \\(k\\) decisiones, y hay \\(n_1\\) formas de tomar la primera decisión, \\(n_2\\) formas de tomar la segunda, y así sucesivamente hasta \\(n_k\\) formas para la \\(k\\)-ésima decisión, entonces el número total de maneras de realizar el proceso completo es \\(n_1 \\times n_2 \\times \\dots \\times n_k\\). Es útil para contar combinaciones de elementos de distintos conjuntos (e.g., elegir una polera Y un pantalón).</li>    <li><strong>Permutaciones</strong>: Se utilizan cuando el <strong>orden de los elementos es importante</strong>. La fórmula para permutar \\(n\\) objetos distintos es \\(n!\\) (n factorial). Si se seleccionan \\(k\\) objetos de \\(n\\) y el orden importa, se usa \\(P(n, k) = \\frac{n!}{(n-k)!}\\).</li>    <li><strong>Combinaciones</strong>: Se aplican cuando el <strong>orden de los elementos NO importa</strong>. La fórmula para elegir \\(k\\) objetos de un conjunto de \\(n\\) objetos distintos es \\(C(n, k) = \\binom{n}{k} = \\frac{n!}{k!(n-k)!}\\). Esto es crucial para formar \"grupos\" o \"subconjuntos\" sin considerar la secuencia de selección.</li>    <li><strong>Cálculo de Probabilidad</strong>: Una vez que se dominan las técnicas de conteo, la probabilidad de un evento se determina como la razón entre el número de casos favorables (contados con las técnicas apropiadas) y el número total de casos posibles (también contados con técnicas de conteo).</li></ul><p>Es vital identificar si en un problema el orden de selección de los elementos es relevante o no, ya que esto dictará si se deben usar permutaciones o combinaciones. Además, para los casos favorables, a menudo se combinan diferentes principios (e.g., elegir hombres Y mujeres).</p>",
+    "summaryKey": "ai-cat-1760926472379-2",
+    "problem_ids": [
+      "q-ai-cat-1760926472379-2-0",
+      "q-ai-cat-1760926472379-2-1",
+      "q-ai-cat-1760926472379-2-2",
+      "q-ai-cat-1760926472379-2-3"
+    ]
+  },
+  {
+    "id": "ai-cat-1760926472379-3",
+    "title": "Aplicaciones y Conceptos Teóricos",
+    "description": "<p>La sección de <strong>Aplicaciones y Conceptos Teóricos</strong> profundiza en la comprensión conceptual de la probabilidad y su aplicación en diversos contextos. Los temas cubiertos incluyen:</p><ul>    <li><strong>Concepto de Evento Seguro</strong>: Un evento que, por definición, siempre ocurre en cualquier realización del experimento aleatorio. Su probabilidad es igual a \\(1\\).</li>    <li><strong>Concepto de Evento Imposible</strong>: Un evento que nunca ocurre. Su probabilidad es igual a \\(0\\).</li>    <li><strong>Propiedades Básicas de la Probabilidad</strong>: La probabilidad de cualquier evento siempre estará entre \\(0\\) y \\(1\\), inclusive.</li>    <li><strong>Regla del Complemento</strong>: Para cualquier evento \\(A\\), la probabilidad de que no ocurra, \\(P(A^c)\\), es \\(1 - P(A)\\). Esta regla es fundamental para muchos cálculos.</li>    <li><strong>Eventos Independientes</strong>: Dos eventos \\(A\\) y \\(B\\) son independientes si la ocurrencia de uno no influye en la probabilidad de ocurrencia del otro. Matemáticamente, esto se expresa como \\(P(A \\cap B) = P(A) \\cdot P(B)\\) o \\(P(A | B) = P(A)\\) y \\(P(B | A) = P(B)\\). Esta propiedad también se aplica a los complementos de eventos independientes.</li>    <li><strong>Tablas de Contingencia</strong>: Son herramientas visuales para organizar datos categóricos y calcular probabilidades. Permiten identificar fácilmente:        <ul>            <li><strong>Probabilidades conjuntas</strong> (e.g., \\(P(\\text{Hombre y Fumador}))\\)), donde el denominador es el total general.</li>            <li><strong>Probabilidades condicionales</strong> (e.g., \\(P(\\text{Fumador | Mujer}))\\)), donde el denominador es el total de la categoría condicionante.</li>        </ul>    </li></ul><p>La clave para esta categoría es no solo aplicar las fórmulas, sino también interpretar correctamente los enunciados y las estructuras de datos para identificar el tipo de probabilidad que se pide y la información relevante para su cálculo.</p>",
+    "summaryKey": "ai-cat-1760926472379-3",
+    "problem_ids": [
+      "q-ai-cat-1760926472379-3-0",
+      "q-ai-cat-1760926472379-3-1",
+      "q-ai-cat-1760926472379-3-2",
+      "q-ai-cat-1760926472379-3-3"
+    ]
+  }
+];
+
+        const problemsById = {};
+        allProblemsData.forEach(p => { problemsById[p.id] = p; });
+        
+        let currentQuizProblems = [];
+        let currentCategory = null;
+        let completedCategories = JSON.parse(localStorage.getItem('completedQuizCategories')) || {};
+        let currentProblemIndex = 0;
+        let score = 0;
+        
+        const categorySelectionScreen = document.getElementById('category-selection-screen');
+        const categoryListEl = document.getElementById('category-list');
+        const overallProgressContainer = document.getElementById('overall-progress-container');
+        const overallScoreEl = document.getElementById('overall-score');
+        const showFinalResultsBtn = document.getElementById('show-final-results-btn');
+        const quizWrapperEl = document.getElementById('quiz-wrapper');
+        const summaryContainerEl = document.getElementById('summary-container');
+        const summaryContinueBtn = document.getElementById('summary-continue-btn');
+        const quizContainerEl = document.getElementById('quiz-container');
+        const headerEl = document.getElementById('problem-header');
+        const questionEl = document.getElementById('question-container');
+        const graphEl = document.getElementById('graph-container');
+        const optionsEl = document.getElementById('options-container');
+        const hintsEl = document.getElementById('hints-container');
+        const feedbackEl = document.getElementById('feedback-container');
+        const nextButton = document.getElementById('next-button');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreCounterEl = document.getElementById('score-counter');
+        const finalScreenEl = document.getElementById('final-screen');
+        const backToMenuBtn = document.getElementById('back-to-menu-btn');
+
+        function renderCategoryScreen() {
+            categoryListEl.innerHTML = '';
+            let totalCompleted = 0;
+            let totalPossibleScore = 0;
+            let totalUserScore = 0;
+
+            categories.forEach(cat => {
+                const li = document.createElement('li');
+                li.className = 'category-item';
+                li.dataset.categoryId = cat.id;
+                
+                const catProgress = completedCategories[cat.id];
+                let progressHTML = '';
+                if(catProgress) {
+                    li.classList.add('completed');
+                    if (catProgress.total > 0) {
+                        progressHTML = `<div class="progress-info">Completado: ${catProgress.score}/${catProgress.total}</div>`;
+                    }
+                    totalCompleted++;
+                    totalUserScore += catProgress.score;
+                    totalPossibleScore += cat.problem_ids.length;
+                }
+
+                li.innerHTML = `<h3>${cat.title}</h3><p>${cat.description.replace(/<[^>]*>?/gm, '').substring(0, 100)}...</p>${progressHTML}`;
+                li.onclick = () => {
+                    if (!li.classList.contains('completed')) {
+                        startCategory(cat.id);
+                    }
+                };
+                categoryListEl.appendChild(li);
+            });
+
+            if (Object.keys(completedCategories).length > 0) {
+                overallProgressContainer.classList.remove('hidden');
+                overallScoreEl.textContent = `Puntaje total: ${totalUserScore} de ${totalPossibleScore} correctas. Secciones completadas: ${totalCompleted} de ${categories.length}.`;
+            } else {
+                 overallProgressContainer.classList.add('hidden');
+            }
+
+            if (totalCompleted === categories.length && categories.length > 0) {
+                showFinalResultsBtn.classList.remove('hidden');
+            } else {
+                showFinalResultsBtn.classList.add('hidden');
+            }
+
+            quizWrapperEl.classList.add('hidden');
+            categorySelectionScreen.classList.remove('hidden');
+        }
+
+        function startCategory(categoryId) {
+            currentCategory = categories.find(c => c.id === categoryId);
+            if (!currentCategory) return;
+            
+            categorySelectionScreen.classList.add('hidden');
+            quizWrapperEl.classList.remove('hidden');
+
+            currentQuizProblems = currentCategory.problem_ids.map(id => problemsById[id]);
+            currentProblemIndex = 0;
+            score = 0;
+            
+            showSummary(currentCategory.id);
+        }
+
+        function showSummary(summaryKey) {
+            const summary = summaries[summaryKey];
+            if (!summary) {
+                 summaryContinueBtn.onclick(); return;
+            }
+            
+            const summaryTitleEl = document.getElementById('summary-title');
+            const keyConceptsEl = document.getElementById('summary-key-concepts');
+            const tipsListEl = document.getElementById('summary-tips-list');
+    
+            summaryTitleEl.textContent = `Preparación para: ${summary.title}`;
+            keyConceptsEl.innerHTML = summary.key_concepts_html;
+            
+            tipsListEl.innerHTML = '';
+            summary.tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                tipsListEl.appendChild(li);
+            });
+            
+            renderMath();
+            quizContainerEl.classList.add('hidden');
+            finalScreenEl.classList.add('hidden');
+            summaryContainerEl.classList.remove('hidden');
+        }
+
+        summaryContinueBtn.onclick = () => {
+            summaryContainerEl.classList.add('hidden');
+            if (currentQuizProblems && currentQuizProblems.length > 0) {
+                quizContainerEl.classList.remove('hidden');
+                renderProblem(currentProblemIndex);
+            } else {
+                endOfCategory();
+            }
+        };
+        
+        function renderProblem(index) {
+            optionsEl.innerHTML = '';
+            hintsEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+            nextButton.classList.remove('visible');
+            graphEl.innerHTML = '';
+            optionsEl.className = '';
+
+            const problem = currentQuizProblems[index];
+            if (!problem) {
+                console.error("Could not find problem for index:", index, "in category:", currentCategory.title);
+                questionEl.innerHTML = "Error: No se pudo cargar la pregunta. Verifique que los datos sean correctos.";
+                return;
+            }
+
+            headerEl.textContent = `Pregunta ${index + 1} de ${currentQuizProblems.length}`;
+            questionEl.innerHTML = problem.text;
+            progressBar.style.width = `${((index) / currentQuizProblems.length) * 100}%`;
+            scoreCounterEl.textContent = `✅ Puntos: ${score}`;
+            
+            if (problem.diagram) {
+                graphEl.style.display = 'block';
+                graphEl.innerHTML = renderDiagram(problem.diagram);
+            } else {
+                graphEl.style.display = 'none';
+            }
+            
+            const optionsHaveDiagrams = problem.options.some(opt => opt.diagram);
+
+            if (optionsHaveDiagrams) {
+                 optionsEl.className = 'options-grid-with-graphs';
+                 problem.options.forEach((opt, i) => createOptionBlock(opt, i));
+            } else {
+                 problem.options.forEach((opt, i) => createOptionButton(opt, i));
+            }
+
+            if (problem.hints && problem.hints.length > 0) {
+                problem.hints.forEach((hint, i) => {
+                    const button = document.createElement('button');
+                    button.className = 'hint-button';
+                    button.textContent = `💡 Revelar Pista ${i + 1}`;
+                    button.dataset.hintIndex = i;
+                    if (i > 0) {
+                        button.disabled = true;
+                    }
+                    button.onclick = (e) => {
+                        const clickedButton = e.currentTarget;
+                        const hintContent = document.createElement('div');
+                        hintContent.className = 'hint-content';
+                        hintContent.innerHTML = hint;
+                        clickedButton.replaceWith(hintContent);
+                        
+                        const nextHintButton = hintsEl.querySelector('.hint-button');
+                        if (nextHintButton) {
+                            nextHintButton.disabled = false;
+                        }
+                        renderMath();
+                    };
+                    hintsEl.appendChild(button);
+                });
+            }
+
+            renderMath();
+        }
+        
+        function createOptionButton(option, index) {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.dataset.index = index;
+            button.innerHTML = `<span class="label">${String.fromCharCode(65 + index)})</span> <span class="value">${option.text || ''}</span>`;
+            button.onclick = handleOptionClick;
+            optionsEl.appendChild(button);
+        }
+        
+        function createOptionBlock(option, index) {
+            const optionBlock = document.createElement('div');
+            optionBlock.className = 'option-block-graph';
+            optionBlock.dataset.index = index;
+            optionBlock.onclick = handleOptionClick;
+            let diagramHTML = option.diagram ? `<div class="option-graph-canvas-container">${renderDiagram(option.diagram)}</div>` : '';
+            optionBlock.innerHTML = `<div class="label">${String.fromCharCode(65 + index)}) ${option.text || ''}</div> ${diagramHTML}`;
+            optionsEl.appendChild(optionBlock);
+        }
+
+        function handleOptionClick(event) {
+            const problem = currentQuizProblems[currentProblemIndex];
+            const selectedIndex = parseInt(event.currentTarget.dataset.index, 10);
+            const correctIndex = problem.correct;
+            
+            const correctButton = document.querySelector(`[data-index="${correctIndex}"]`);
+            if (correctButton) correctButton.classList.add('correct');
+            
+            let isAnswerCorrect = false;
+            const selectedButton = event.currentTarget;
+            if (selectedIndex === correctIndex) {
+                score++;
+                isAnswerCorrect = true;
+            } else {
+                selectedButton.classList.add('incorrect');
+            }
+            
+            scoreCounterEl.textContent = `✅ Puntos: ${score}`;
+            document.querySelectorAll('.option-button, .option-block-graph').forEach(btn => { btn.classList.add('disabled'); btn.onclick = null; });
+            progressBar.style.width = `${((currentProblemIndex + 1) / currentQuizProblems.length) * 100}%`;
+            
+            feedbackEl.className = isAnswerCorrect ? 'feedback-container correct' : 'feedback-container incorrect';
+            const feedbackTitle = isAnswerCorrect ? `<div id="feedback-title">${icons.check} Correcto</div>` : `<div id="feedback-title">${icons.x} Incorrecto</div>`;
+            feedbackEl.innerHTML = `${feedbackTitle}${problem.explanation}`;
+            
+            renderMath();
+            feedbackEl.style.display = 'block';
+            if (currentProblemIndex < currentQuizProblems.length - 1) { nextButton.textContent = 'Siguiente →'; } 
+            else { nextButton.textContent = 'Finalizar Sección'; }
+            nextButton.classList.add('visible');
+        }
+
+        nextButton.onclick = () => {
+            currentProblemIndex++;
+            if (currentProblemIndex < currentQuizProblems.length) {
+                renderProblem(currentProblemIndex);
+            } else {
+                endOfCategory();
+            }
+        };
+        
+        function endOfCategory() {
+            completedCategories[currentCategory.id] = {
+                score: score,
+                total: currentQuizProblems.length
+            };
+            localStorage.setItem('completedQuizCategories', JSON.stringify(completedCategories));
+            
+            quizContainerEl.classList.add('hidden');
+            finalScreenEl.classList.remove('hidden');
+
+            const percentage = currentQuizProblems.length > 0 ? Math.round((score / currentQuizProblems.length) * 100) : 100;
+            document.getElementById('final-title').textContent = `Sección Completada: ${currentCategory.title}`;
+            document.getElementById('final-message').textContent = currentQuizProblems.length > 0 ? `¡Gran trabajo! Has completado esta sección.` : `¡Concepto explorado! Ahora puedes continuar con la siguiente sección.`;
+            document.getElementById('final-score').textContent = currentQuizProblems.length > 0 ? `${score} / ${currentQuizProblems.length}` : '✔';
+            const finalPercentageEl = document.getElementById('final-percentage');
+            if (currentQuizProblems.length > 0) {
+                finalPercentageEl.textContent = `(${percentage}%)`;
+                finalPercentageEl.style.color = percentage >= 60 ? 'var(--success-color)' : 'var(--danger-color)';
+            } else {
+                finalPercentageEl.textContent = '';
+            }
+            backToMenuBtn.textContent = 'Volver al Menú';
+            backToMenuBtn.onclick = () => {
+                finalScreenEl.classList.add('hidden');
+                renderCategoryScreen();
+            };
+        }
+        
+        showFinalResultsBtn.onclick = () => {
+            categorySelectionScreen.classList.add('hidden');
+            quizWrapperEl.classList.remove('hidden');
+
+            summaryContainerEl.classList.add('hidden');
+            quizContainerEl.classList.add('hidden');
+            finalScreenEl.classList.remove('hidden');
+
+            let totalScore = 0;
+            let totalProblems = 0;
+            Object.values(completedCategories).forEach(cat => {
+                totalScore += cat.score;
+                if (cat.total > 0) {
+                    totalProblems += cat.total;
+                }
+            });
+
+            const percentage = totalProblems > 0 ? Math.round((totalScore / totalProblems) * 100) : 0;
+            document.getElementById('final-title').textContent = '¡Resumen Final del Desafío!';
+            document.getElementById('final-message').textContent = '¡Felicidades! Has completado todos los temas. Este es tu rendimiento general.';
+            document.getElementById('final-score').textContent = `${totalScore} / ${totalProblems}`;
+            const finalPercentageEl = document.getElementById('final-percentage');
+            finalPercentageEl.textContent = `(${percentage}%)`;
+            finalPercentageEl.style.color = percentage >= 60 ? 'var(--success-color)' : 'var(--danger-color)';
+            
+            backToMenuBtn.textContent = 'Reiniciar Desafío';
+            backToMenuBtn.onclick = () => {
+                localStorage.removeItem('completedQuizCategories');
+                window.location.reload();
+            };
+        };
+        
+        renderCategoryScreen();
+        renderMath();
+    });
+    </script>
+</body>
+</html>
+  
